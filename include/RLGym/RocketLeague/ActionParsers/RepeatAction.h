@@ -6,6 +6,10 @@
 
 #include <RLGym/API/typing.h>
 
+#ifdef TRACY_ENABLE
+#include <tracy/Tracy.hpp>
+#endif
+
 using namespace RLGYM_API_NS;
 using namespace RLGYM_RL_NS::RGSim;
 
@@ -18,6 +22,9 @@ public:
 
 	ActionSpaceType GetActionSpace(const AgentID& agent) override { return this->m_innerParser->GetActionSpace(agent); };
 	AGENT_MAP(RocketSimAction) ParseActions(const AGENT_MAP(ActionType) actions, GameState<AgentID>& state, SharedInfo& sharedInfo) override {
+#ifdef TRACY_ENABLE
+		ZoneScopedNC("Action parsing", tracy::Color::Pink);
+#endif
 		AGENT_MAP(RocketSimAction) parsedActions = {};
 
 		for (const auto& [agent, action] : this->m_innerParser->ParseActions(actions, state, sharedInfo)) {

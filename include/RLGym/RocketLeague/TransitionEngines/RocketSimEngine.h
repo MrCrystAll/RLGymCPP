@@ -10,6 +10,10 @@
 #include <RocketSim/RocketSim.h>
 #include <RocketSim/Sim/GameEventTracker/GameEventTracker.h>
 
+#ifdef TRACY_ENABLE
+#include <tracy/Tracy.hpp>
+#endif
+
 #include <array>
 #include <ranges>
 #include <filesystem>
@@ -24,7 +28,7 @@ template<typename AgentID>
 class RocketSimEngine : public TransitionEngine<AgentID, GameState<AgentID>, RocketSimAction> {
 public:
 	RocketSimEngine(bool rlbotDelay = true, RocketSim::GameMode gamemode = RocketSim::GameMode::SOCCAR) : m_rlbotDelay(rlbotDelay), m_mode(gamemode) {
-		RocketSim::Init(fs::current_path() / "resources" / "RocketLeague" / "collision_meshes");
+		RocketSim::Init(fs::current_path() / "resources" / "RocketLeague" / "collision_meshes", true);
 		this->m_arena = RocketSim::Arena::Create(gamemode);
 
 		this->m_arena->SetGoalScoreCallback([](RocketSim::Arena* arena, RocketSim::Team team, void* userInfo) {
@@ -37,6 +41,10 @@ public:
 	};
 
 	GameState<AgentID>& GetState() override {
+#ifdef TRACY_ENABLE
+		ZoneScopedN("RocketSimEngine GetState");
+#endif
+
 		GameState<AgentID> gs = GameState<AgentID>();
 
 		gs.tickCount = this->m_tickCount;
@@ -142,6 +150,10 @@ public:
 		return gs;
 	};
 	virtual GameState<AgentID> Step(const AGENT_MAP(RocketSimAction) actions, SharedInfo& sharedInfo) override {
+#ifdef TRACY_ENABLE
+		ZoneScopedNC("RocketSimEngine Step", tracy::Color::Blue3);
+#endif
+
 		int steps = 1;
 
 		if (actions.size() != this->m_cars.size()) {
@@ -150,37 +162,46 @@ public:
 		auto action = actions.begin();
 		steps = action->second.size();
 
-		for (int step = 0; step < steps; step++) {
-			if (this->m_rlbotDelay) {
-				this->m_arena->Step(1);
+#ifdef TRACY_ENABLE
+		ZoneNamedN(Arenastep, "Rocketsim Arena step", true); {
+#endif
+			for (int step = 0; step < steps; step++) {
+				if (this->m_rlbotDelay) {
+					this->m_arena->Step(1);
+				}
+
+				for (auto [agentID, action] : actions) {
+					RocketSim::CarControls controls = {};
+
+					controls.throttle = action[step][0];
+					controls.steer = action[step][1];
+					controls.pitch = action[step][2];
+					controls.yaw = action[step][3];
+					controls.roll = action[step][4];
+					controls.jump = action[step][5];
+					controls.boost = action[step][6];
+					controls.handbrake = action[step][7];
+
+					this->m_cars[agentID]->controls = controls;
+				}
+
+				if (!this->m_rlbotDelay) {
+					this->m_arena->Step(1);
+				}
+
+				this->m_tickCount += 1;
 			}
-
-			for (auto [agentID, action] : actions) {
-				RocketSim::CarControls controls = {};
-
-				controls.throttle = action[step][0];
-				controls.steer = action[step][1];
-				controls.pitch = action[step][2];
-				controls.yaw = action[step][3];
-				controls.roll = action[step][4];
-				controls.jump = action[step][5];
-				controls.boost = action[step][6];
-				controls.handbrake = action[step][7];
-
-				this->m_cars[agentID]->controls = controls;
-			}
-
-			if (!this->m_rlbotDelay) {
-				this->m_arena->Step(1);
-			}
-
-			this->m_tickCount += 1;
-		}
+#ifdef TRACY_ENABLE
+		};
+#endif
 
 		return this->GetState();
 	};
 
 	virtual GameState<AgentID> SetState(GameState<AgentID>& desiredState, SharedInfo& sharedInfo) override {
+#ifdef TRACY_ENABLE
+		ZoneScopedN("RocketSimEngine SetState");
+#endif
 		this->m_tickCount = desiredState.tickCount;
 
 		RocketSim::MutatorConfig mutatorConfig = RocketSim::MutatorConfig(this->m_mode);

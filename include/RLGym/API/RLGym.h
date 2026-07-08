@@ -1,20 +1,24 @@
 #pragma once
 
 #include <RLGym/API/typing.h>
+#ifdef TRACY_ENABLE
+#include <tracy/Tracy.hpp>
+#endif
 #include <optional>
 
 START_API_NS
 
+template<typename AgentID, typename ObsType, typename RewardType>
+struct EnvReturn {
+	AGENT_MAP(ObsType) observations;
+	AGENT_MAP(RewardType) rewards;
+	AGENT_MAP(bool) terminated;
+	AGENT_MAP(bool) truncated;
+};
+
 template <typename AgentID, typename ObsType, typename ActionType, typename EngineActionType, typename RewardType, typename StateType, typename ObsSpaceType, typename ActionSpaceType>
 class RLGym {
 public:
-	struct EnvReturn {
-		AGENT_MAP(ObsType) observations;
-		AGENT_MAP(RewardType) rewards;
-		AGENT_MAP(bool) terminated;
-		AGENT_MAP(bool) truncated;
-	};
-
 	RLGym(
 		StateMutator<StateType>* stateMutator,
 		ObsBuilder<AgentID, ObsType, StateType, ObsSpaceType>* obsBuilder,
@@ -75,6 +79,9 @@ public:
 	}
 
 	virtual const AGENT_MAP(ObsType) Reset() {
+#ifdef TRACY_ENABLE
+		ZoneScoped;
+#endif
 		if (this->m_sharedInfoProvider.has_value()) {
 			this->m_sharedInfo = this->m_sharedInfoProvider.value()->Create(this->m_sharedInfo);
 		}
@@ -100,9 +107,13 @@ public:
 		return this->m_obsBuilder->BuildObs(agents, initialState, this->m_sharedInfo);
 	}
 
-	virtual const EnvReturn Step(
+	virtual const EnvReturn<AgentID, ObsType, RewardType> Step(
 		AGENT_MAP(ActionType) actions
 	) {
+#ifdef TRACY_ENABLE
+		ZoneScoped;
+#endif
+
 		const AGENT_MAP(EngineActionType) engine_actions = this->m_actionParser->ParseActions(actions, this->GetState(), this->m_sharedInfo);
 		StateType newState = this->m_transitionEngine->Step(engine_actions, this->m_sharedInfo);
 		std::vector<AgentID> agents = this->GetAgents();
@@ -135,7 +146,7 @@ public:
 
 		const AGENT_MAP(RewardType) rewards = this->m_rewardFunction->GetRewards(agents, newState, this->m_sharedInfo);
 		
-		EnvReturn result = {};
+		EnvReturn<AgentID, ObsType, RewardType> result = {};
 
 		result.observations = obs;
 		result.rewards = rewards;

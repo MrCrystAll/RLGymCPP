@@ -5,6 +5,12 @@
 
 #include <RLGym/API/typing.h>
 
+#ifdef TRACY_ENABLE
+
+#include <tracy/Tracy.hpp>
+
+#endif
+
 #include <string>
 #include <optional>
 
@@ -37,6 +43,10 @@ public:
 		return std::make_tuple(std::string("real"), -1);
 	};
 	AGENT_MAP(std::vector<float>) BuildObs(const std::vector<AgentID> agents, GameState<AgentID>& state, SharedInfo& sharedInfo) override {
+#ifdef TRACY_ENABLE
+		ZoneScopedNC("Observation building", tracy::Color::Yellow);
+#endif
+		
 		this->m_state = state;
 
 		AGENT_MAP(std::vector<float>) observations = {};

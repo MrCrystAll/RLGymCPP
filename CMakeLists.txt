@@ -10,8 +10,9 @@ target_include_directories(RLGymAPI INTERFACE "include")
 
 
 add_subdirectory("libsrc/eigen")
+add_subdirectory("libsrc/RocketSim")
 # Add source to this project's executable.
-add_library (RLGymRocketLeague STATIC 
+add_library (RLGymRocketLeague INTERFACE 
 	"include/RLGym/RocketLeague/CommonValues.h"
 	"include/RLGym/RocketLeague/Framework.h"
 	"include/RLGym/RocketLeague/RocketLeague.h"
@@ -39,6 +40,8 @@ add_library (RLGymRocketLeague STATIC
 	"include/RLGym/RocketLeague/RewardFunctions/all.h"
 
 	"include/RLGym/RocketLeague/DoneConditions/GoalCondition.h"
+	"include/RLGym/RocketLeague/DoneConditions/TimeoutCondition.h"
+	"include/RLGym/RocketLeague/DoneConditions/AnyCondition.h"
 	"include/RLGym/RocketLeague/DoneConditions/all.h"
 
 	"include/RLGym/RocketLeague/StateMutators/FixedTeamSizeMutator.h"
@@ -47,13 +50,18 @@ add_library (RLGymRocketLeague STATIC
 	"include/RLGym/RocketLeague/StateMutators/all.h"
 
 	"include/RLGym/RocketLeague/Renderers/RocketSimVisRenderer.h"
-	"include/RLGym/RocketLeague/Renderers/all.h"
- "test.cpp" "include/RLGym/RocketLeague/DoneConditions/TimeoutCondition.h" "include/RLGym/RocketLeague/DoneConditions/AnyCondition.h")
+	"include/RLGym/RocketLeague/Renderers/all.h")
 
-target_include_directories(RLGymRocketLeague PUBLIC "include" "libsrc/json/include"
+target_include_directories(RLGymRocketLeague INTERFACE "include" "libsrc/json/include"
 )
 
-target_link_libraries(RLGymRocketLeague PUBLIC RLGymAPI Eigen3::Eigen RocketSim)
+target_link_libraries(RLGymRocketLeague INTERFACE RLGymAPI Eigen3::Eigen RocketSim)
+
+if(ENABLE_TRACY)
+	target_include_directories(RLGymRocketLeague INTERFACE ${tracy_SOURCE_DIR}/public)
+	target_compile_definitions(RLGymRocketLeague INTERFACE TRACY_ENABLE)
+	target_sources(RLGymRocketLeague PRIVATE ${tracy_SOURCE_DIR}/public/TracyClient.cpp)
+endif()
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET RLGymAPI PROPERTY CXX_STANDARD 26)

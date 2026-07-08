@@ -23,7 +23,7 @@ public:
 	AGENT_MAP(bool) IsDone(const std::vector<AgentID> agents, RGSim::GameState<AgentID>& state, SharedInfo& sharedInfo) {
 		bool isDone = false;
 		for (DoneCondition<AgentID, RGSim::GameState<AgentID>>* condition : m_conditions) {
-			AGENT_MAP(bool) isDoneCondition = condition->IsDone(agents, initialState, sharedInfo);
+			AGENT_MAP(bool) isDoneCondition = condition->IsDone(agents, state, sharedInfo);
 
 			for (auto& [agentID, done] : isDoneCondition) {
 				isDone = done;

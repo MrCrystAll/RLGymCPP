@@ -6,6 +6,10 @@
 
 #include <RLGym/API/typing.h>
 
+#ifdef TRACY_ENABLE
+#include <tracy/Tracy.hpp>
+#endif
+
 #include <vector>
 #include <array>
 #include <string>
@@ -21,6 +25,9 @@ public:
 	LookupTableAction() { this->MakeLookupTable(); };
 	std::tuple<std::string, int> GetActionSpace(const AgentID& agent) override { return std::make_tuple(std::string("discrete"), static_cast<int>(this->m_lookupTable.size())); };
 	AGENT_MAP(RocketSimAction) ParseActions(const AGENT_MAP(int) actions, GameState<AgentID>& state, SharedInfo& sharedInfo) override {
+#ifdef TRACY_ENABLE
+		ZoneScoped;
+#endif
 		AGENT_MAP(RocketSimAction) parsedActions = {};
 
 		for (const auto& [agent, action] : actions) {

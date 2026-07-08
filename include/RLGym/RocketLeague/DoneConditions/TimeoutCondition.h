@@ -5,6 +5,12 @@
 
 #include <RLGym/API/typing.h>
 
+#ifdef TRACY_ENABLE
+
+#include <tracy/Tracy.hpp>
+
+#endif
+
 using namespace RLGYM_API_NS;
 
 START_RL_NS(DoneConditions)
@@ -14,6 +20,9 @@ class TimeoutCondition : public DoneCondition<AgentID, RGSim::GameState<AgentID>
 public:
 	TimeoutCondition(float secondsBeforeReset) : m_ticksBeforeReset(secondsBeforeReset* TICKS_PER_SECOND) {};
 	virtual AGENT_MAP(bool) IsDone(const std::vector<AgentID> agents, RGSim::GameState<AgentID>& state, SharedInfo& sharedInfo) {
+#ifdef TRACY_ENABLE
+		ZoneScopedNC("Terminal condition", tracy::Color::Gray);
+#endif
 		this->m_currentTicks += state.tickCount - this->m_lastArenaTickCount;
 		this->m_lastArenaTickCount = state.tickCount;
 
