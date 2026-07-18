@@ -15,11 +15,11 @@ using namespace RLGYM_API_NS;
 
 START_RL_NS(DoneConditions)
 
-template<typename AgentID>
+template<Hashable AgentID>
 class TimeoutCondition : public DoneCondition<AgentID, RGSim::GameState<AgentID>> {
 public:
 	TimeoutCondition(float secondsBeforeReset) : m_ticksBeforeReset(secondsBeforeReset* TICKS_PER_SECOND) {};
-	virtual AGENT_MAP(bool) IsDone(const std::vector<AgentID> agents, RGSim::GameState<AgentID>& state, SharedInfo& sharedInfo) {
+	const AGENT_MAP(bool) IsDone(const std::vector<AgentID>& agents, const RGSim::GameState<AgentID>& state, SharedInfo& sharedInfo) override {
 #ifdef TRACY_ENABLE
 		ZoneScopedNC("Terminal condition", tracy::Color::Gray);
 #endif
@@ -39,10 +39,12 @@ public:
 
 		return dones;
 	}
-	void Reset(const std::vector<AgentID> agents, RGSim::GameState<AgentID>& initialState, SharedInfo& sharedInfo) {
+	void Reset(const std::vector<AgentID>& agents, const RGSim::GameState<AgentID>& initialState, SharedInfo& sharedInfo) override {
 		this->m_currentTicks = 0;
 		this->m_lastArenaTickCount = initialState.tickCount;
 	}
+
+	TRACY_ALLOC("Timeout done condition")
 private:
 	int m_ticksBeforeReset, m_currentTicks = 0, m_lastArenaTickCount = 0;
 };

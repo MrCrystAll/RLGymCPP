@@ -1,22 +1,12 @@
 #pragma once
 
 #include <RLGym/API/typing.h>
-#ifdef TRACY_ENABLE
-#include <tracy/Tracy.hpp>
-#endif
+#include <RLGym/API/Framework.h>
 #include <optional>
 
 START_API_NS
 
-template<typename AgentID, typename ObsType, typename RewardType>
-struct EnvReturn {
-	AGENT_MAP(ObsType) observations;
-	AGENT_MAP(RewardType) rewards;
-	AGENT_MAP(bool) terminated;
-	AGENT_MAP(bool) truncated;
-};
-
-template <typename AgentID, typename ObsType, typename ActionType, typename EngineActionType, typename RewardType, typename StateType, typename ObsSpaceType, typename ActionSpaceType>
+template <Hashable AgentID, typename ObsType, typename ActionType, typename EngineActionType, typename RewardType, typename StateType, typename ObsSpaceType, typename ActionSpaceType>
 class RLGym {
 public:
 	RLGym(
@@ -39,6 +29,10 @@ public:
 		m_renderer(renderer)
 	{
 	};
+
+	~RLGym() {
+		this->Close();
+	}
 
 	virtual const std::vector<AgentID> GetAgents() { return this->m_transitionEngine->GetAgents(); };
 	virtual const ActionSpaceType GetActionSpace(const AgentID& agentID) { return this->m_actionParser->GetActionSpace(agentID); };
@@ -64,14 +58,14 @@ public:
 
 		return spaces;
 	}
-	virtual StateType& GetState() { return this->m_transitionEngine->GetState(); };
+	virtual const StateType GetState() { return this->m_transitionEngine->GetState(); };
 
 	virtual const AGENT_MAP(ObsType) SetState(StateType& desiredState) {
 		if (this->m_sharedInfoProvider.has_value()) {
 			this->m_sharedInfo = this->m_sharedInfoProvider.value()->Create(this->m_sharedInfo);
 		}
-		StateType state = this->m_transitionEngine->SetState(desiredState, this->m_sharedInfo);
-		std::vector<AgentID> agents = this->GetAgents();
+		const StateType& state = this->m_transitionEngine->SetState(desiredState, this->m_sharedInfo);
+		const std::vector<AgentID>& agents = this->GetAgents();
 		if (this->m_sharedInfoProvider.has_value()) {
 			this->m_sharedInfo = this->m_sharedInfoProvider.value()->SetState(agents, state, this->m_sharedInfo);
 		}
@@ -85,10 +79,10 @@ public:
 		if (this->m_sharedInfoProvider.has_value()) {
 			this->m_sharedInfo = this->m_sharedInfoProvider.value()->Create(this->m_sharedInfo);
 		}
-		StateType desiredState = this->m_transitionEngine->CreateBaseState();
-		this->m_stateMutator->Apply(desiredState, this->m_sharedInfo);
-		StateType initialState = this->m_transitionEngine->SetState(desiredState, this->m_sharedInfo);
-		std::vector<AgentID> agents = this->GetAgents();
+		StateType baseState = this->m_transitionEngine->CreateBaseState();
+		this->m_stateMutator->Apply(baseState, this->m_sharedInfo);
+		const StateType& initialState = this->m_transitionEngine->SetState(baseState, this->m_sharedInfo);
+		const std::vector<AgentID>& agents = this->GetAgents();
 
 		if (this->m_sharedInfoProvider.has_value()) {
 			this->m_sharedInfo = this->m_sharedInfoProvider.value()->SetState(agents, initialState, this->m_sharedInfo);
@@ -115,8 +109,8 @@ public:
 #endif
 
 		const AGENT_MAP(EngineActionType) engine_actions = this->m_actionParser->ParseActions(actions, this->GetState(), this->m_sharedInfo);
-		StateType newState = this->m_transitionEngine->Step(engine_actions, this->m_sharedInfo);
-		std::vector<AgentID> agents = this->GetAgents();
+		const StateType& newState = this->m_transitionEngine->Step(engine_actions, this->m_sharedInfo);
+		const std::vector<AgentID>& agents = this->GetAgents();
 
 		if (this->m_sharedInfoProvider.has_value()) {
 			this->m_sharedInfo = this->m_sharedInfoProvider.value()->Step(agents, newState, this->m_sharedInfo);
@@ -169,6 +163,11 @@ public:
 		}
 	}
 
+	virtual SharedInfo& GetSharedInfo() {
+		return this->m_sharedInfo;
+	}
+
+	TRACY_ALLOC("RLGym object")
 
 protected:
 	StateMutator<StateType>* m_stateMutator;

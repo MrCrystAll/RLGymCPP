@@ -19,7 +19,7 @@ using namespace RLGYM_RL_NS::RGSim;
 
 START_RL_NS(ObsBuilders)
 
-	template<typename AgentID>
+	template<Hashable AgentID>
 class DefaultObs : public ObsBuilder<AgentID, std::vector<float>, GameState<AgentID>, std::tuple<std::string, int>> {
 public:
 	DefaultObs(
@@ -33,7 +33,7 @@ public:
 	) : m_zeroPadding(zeroPadding), m_positionCoefficient(positionCoefficient), m_linearVelocityCoefficient(linearVelocityCoefficient), m_angularVelocityCoefficient(angularVelocityCoefficient), m_padTimerCoefficient(padTimerCoefficient), m_boostCoefficient(boostCoefficient) {
 	};
 
-	std::tuple<std::string, int> GetObservationSpace(const AgentID& agent) override {
+	const std::tuple<std::string, int> GetObservationSpace(const AgentID& agent) override {
 		if (this->m_zeroPadding.has_value()) {
 			return std::make_tuple(std::string("real"), this->SELF_PLUS_BALL_SIZE + this->PLAYER_PAD_SIZE * this->m_zeroPadding.value() * 2);
 		}
@@ -42,7 +42,7 @@ public:
 		}
 		return std::make_tuple(std::string("real"), -1);
 	};
-	AGENT_MAP(std::vector<float>) BuildObs(const std::vector<AgentID> agents, GameState<AgentID>& state, SharedInfo& sharedInfo) override {
+	const AGENT_MAP(std::vector<float>) BuildObs(const std::vector<AgentID>& agents, const GameState<AgentID>& state, SharedInfo& sharedInfo) override {
 #ifdef TRACY_ENABLE
 		ZoneScopedNC("Observation building", tracy::Color::Yellow);
 #endif
@@ -57,7 +57,7 @@ public:
 
 			obs.reserve(size);
 
-			Car<AgentID>& car = state.cars[agent];
+			const Car<AgentID>& car = state.cars.at(agent);
 
 			bool inverted = false;
 			PhysicsObject ball = state.ball;
@@ -132,12 +132,13 @@ public:
 		return observations;
 	};
 
-	void Reset(const std::vector<AgentID> agents, GameState<AgentID>& initialState, SharedInfo& sharedInfo) override {
+	void Reset(const std::vector<AgentID>& agents, const GameState<AgentID>& initialState, SharedInfo& sharedInfo) override {
 		this->m_state = initialState;
 	};
+	TRACY_ALLOC("Default observation builder")
 protected:
 	virtual std::vector<float> GenerateCarObs(
-		Car<AgentID>& car,
+		const Car<AgentID>& car,
 		bool inverted
 	) {
 		PhysicsObject physics = car.physics;

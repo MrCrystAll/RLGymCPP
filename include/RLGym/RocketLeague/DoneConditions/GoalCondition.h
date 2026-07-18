@@ -10,11 +10,11 @@ using namespace RLGYM_RL_NS::RGSim;
 
 START_RL_NS(DoneConditions)
 
-template<typename AgentID>
+template<Hashable AgentID>
 class GoalCondition : public DoneCondition<AgentID, GameState<AgentID>> {
 public:
-	void Reset(const std::vector<AgentID> agents, GameState<AgentID>& initialState, SharedInfo& sharedInfo) {}; // Noop
-	AGENT_MAP(bool) IsDone(const std::vector<AgentID> agents, GameState<AgentID>& state, SharedInfo& sharedInfo) {
+	void Reset(const std::vector<AgentID>& agents, const GameState<AgentID>& initialState, SharedInfo& sharedInfo) override {}; // Noop
+	const AGENT_MAP(bool) IsDone(const std::vector<AgentID>& agents, const GameState<AgentID>& state, SharedInfo& sharedInfo) override {
 		AGENT_MAP(bool) dones = {};
 
 		for (const AgentID& agent : agents) {
@@ -23,6 +23,8 @@ public:
 
 		return dones;
 	}
+
+	TRACY_ALLOC("Goal done condition")
 };
 
 END_RL_NS

@@ -15,13 +15,13 @@ using namespace RLGYM_RL_NS::RGSim;
 
 START_RL_NS(ActionParsers)
 
-template<typename AgentID, typename ActionType, typename ActionSpaceType>
+template<Hashable AgentID, typename ActionType, typename ActionSpaceType>
 class RepeatAction : public ActionParser<AgentID, ActionType, RocketSimAction, GameState<AgentID>, ActionSpaceType> {
 public:
 	RepeatAction(ActionParser<AgentID, ActionType, RocketSimAction, GameState<AgentID>, ActionSpaceType>* innerParser, int repeats = 8) : m_innerParser(innerParser), m_repeats(repeats) {};
 
-	ActionSpaceType GetActionSpace(const AgentID& agent) override { return this->m_innerParser->GetActionSpace(agent); };
-	AGENT_MAP(RocketSimAction) ParseActions(const AGENT_MAP(ActionType) actions, GameState<AgentID>& state, SharedInfo& sharedInfo) override {
+	const ActionSpaceType GetActionSpace(const AgentID& agent) override { return this->m_innerParser->GetActionSpace(agent); };
+	const AGENT_MAP(RocketSimAction) ParseActions(const AGENT_MAP(ActionType)& actions, const GameState<AgentID>& state, SharedInfo& sharedInfo) override {
 #ifdef TRACY_ENABLE
 		ZoneScopedNC("Action parsing", tracy::Color::Pink);
 #endif
@@ -37,9 +37,11 @@ public:
 
 		return parsedActions;
 	};
-	void Reset(const std::vector<AgentID> agents, GameState<AgentID>& initialState, SharedInfo& sharedInfo) override {
+	void Reset(const std::vector<AgentID>& agents, const GameState<AgentID>& initialState, SharedInfo& sharedInfo) override {
 		this->m_innerParser->Reset(agents, initialState, sharedInfo);
 	}
+
+	TRACY_ALLOC("Repeat action parser")
 
 private:
 	ActionParser<AgentID, ActionType, RocketSimAction, GameState<AgentID>, ActionSpaceType>* m_innerParser;

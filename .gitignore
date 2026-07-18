@@ -457,3 +457,5 @@ FodyWeavers.xsd
 
 libsrc/
 out/
+
+tests/resources

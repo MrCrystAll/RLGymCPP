@@ -21,10 +21,14 @@
 using Eigen::VectorXf;
 
 using namespace RLGYM_API_NS;
+using namespace RLGYM_RL_NS::RGSim;
 namespace fs = std::filesystem;
 
+#define ROCKETSIM_ENGINE_ACTION RocketSimAction
+#define ROCKETSIM_STATE(AgentIDType) GameState<AgentIDType>
+
 START_RL_NS(TransitionEngines)
-template<typename AgentID>
+template<Hashable AgentID>
 class RocketSimEngine : public TransitionEngine<AgentID, GameState<AgentID>, RocketSimAction> {
 public:
 	RocketSimEngine(bool rlbotDelay = true, RocketSim::GameMode gamemode = RocketSim::GameMode::SOCCAR) : m_rlbotDelay(rlbotDelay), m_mode(gamemode) {
@@ -40,7 +44,7 @@ public:
 			}, this);
 	};
 
-	GameState<AgentID>& GetState() override {
+	const GameState<AgentID>& GetState() override {
 #ifdef TRACY_ENABLE
 		ZoneScopedN("RocketSimEngine GetState");
 #endif
@@ -149,7 +153,7 @@ public:
 
 		return gs;
 	};
-	virtual GameState<AgentID> Step(const AGENT_MAP(RocketSimAction) actions, SharedInfo& sharedInfo) override {
+	virtual const GameState<AgentID> Step(const AGENT_MAP(RocketSimAction)& actions, SharedInfo& sharedInfo) override {
 #ifdef TRACY_ENABLE
 		ZoneScopedNC("RocketSimEngine Step", tracy::Color::Blue3);
 #endif
@@ -198,7 +202,7 @@ public:
 		return this->GetState();
 	};
 
-	virtual GameState<AgentID> SetState(GameState<AgentID>& desiredState, SharedInfo& sharedInfo) override {
+	virtual const GameState<AgentID> SetState(const GameState<AgentID>& desiredState, SharedInfo& sharedInfo) override {
 #ifdef TRACY_ENABLE
 		ZoneScopedN("RocketSimEngine SetState");
 #endif
@@ -296,7 +300,9 @@ public:
 
 		return agents;
 	};
-	virtual int GetMaxNumAgents() override { return 1337; };
+	virtual const int GetMaxNumAgents() override { return 1337; };
+
+	TRACY_ALLOC("RocketSim transition engine")
 
 private:
 

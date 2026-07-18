@@ -14,7 +14,7 @@ using namespace RLGYM_RL_NS::RGSim;
 
 START_RL_NS(StateMutators)
 
-template<typename AgentID>
+template<Hashable AgentID>
 class MutatorSequence : public StateMutator<GameState<AgentID>> {
 public:
 	template<Derived<StateMutator<GameState<AgentID>>> ...Args>
@@ -28,6 +28,8 @@ public:
 			mutator->Apply(state, sharedInfo);
 		}
 	}
+
+	TRACY_ALLOC("Mutator sequence")
 private:
 	std::vector<StateMutator<GameState<AgentID>>*> m_mutators;
 };

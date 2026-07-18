@@ -3,6 +3,8 @@
 #include <RLGym/RocketLeague/RocketSim/PhysicsObject.h>
 #include <RLGym/RocketLeague/CommonValues.h>
 
+#include <RLGym/API/typing.h>
+
 #include <Eigen/Dense>
 
 #include <optional>
@@ -14,7 +16,7 @@ using namespace RLGYM_RL_NS::CommonValues;
 
 START_RL_NS(RGSim)
 
-template<typename AgentID>
+template<RG::API::Hashable AgentID>
 class Car {
 public:
 	int teamNum = -1, hitboxType = OCTANE, ballTouches = 0;
@@ -88,6 +90,15 @@ public:
 
         return *m_invertedPhysics;
     }
+
+    const PhysicsObject InvertedPhysics() const {
+        if (!m_invertedPhysics.has_value())
+            return physics.Inverted();
+
+        return *m_invertedPhysics;
+    }
+
+    TRACY_ALLOC("Car")
 
 private:
 	std::optional<PhysicsObject> m_invertedPhysics;

@@ -21,7 +21,7 @@ using namespace RLGYM_RL_NS::RGSim;
 
 START_RL_NS(Renderers)
 
-template<typename AgentID>
+template<Hashable AgentID>
 class RocketSimVisRenderer : public Renderer<GameState<AgentID>> {
 public:
     RocketSimVisRenderer() {
@@ -52,7 +52,7 @@ public:
         socketInitialized = true;
     }
 
-    void Render(GameState<AgentID>& state, SharedInfo& sharedInfo) {
+    void Render(const GameState<AgentID>& state, SharedInfo& sharedInfo) override {
         auto data = this->GameStateToJson(state).dump();
         if (this->socketInitialized) {
             sendto(
@@ -66,15 +66,17 @@ public:
         }
 
     };
-    void Close() {
+    void Close() override {
         if (socketInitialized) {
             closesocket(m_udpSocket);
             WSACleanup();
             socketInitialized = false;
         }
     };
+
+    TRACY_ALLOC("RocketSimVis renderer")
 private:
-    json PhysicsToJSON(PhysicsObject& physObj) {
+    json PhysicsToJSON(const PhysicsObject& physObj) {
         json j = {};
 
         j["pos"] = std::span<float, 3>(physObj.position.data(), 3);
@@ -85,7 +87,7 @@ private:
         return j;
     };
 
-    json CarToJSON(const AgentID& agent, Car<AgentID>& car) {
+    json CarToJSON(const AgentID& agent, const Car<AgentID>& car) {
         json j = {};
 
         j["car_id"] = agent;
@@ -99,7 +101,7 @@ private:
         return j;
     }
 
-    json GameStateToJson(GameState<AgentID>& state) {
+    json GameStateToJson(const GameState<AgentID>& state) {
         json j = {};
 
         j["gamemode"] = "soccar";

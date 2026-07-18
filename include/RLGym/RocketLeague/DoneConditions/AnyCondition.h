@@ -9,21 +9,21 @@ using namespace RLGYM_API_NS;
 
 START_RL_NS(DoneConditions)
 
-template<typename AgentID>
+template<Hashable AgentID>
 class AnyCondition : public DoneCondition<AgentID, RGSim::GameState<AgentID>> {
 public:
 	template<Derived<DoneCondition<AgentID, RGSim::GameState<AgentID>>> ...Args>
 	AnyCondition(Args*... conditions) : m_conditions(conditions...) {};
 
-	void Reset(const std::vector<AgentID> agents, GameState<AgentID>& initialState, SharedInfo& sharedInfo) {
+	void Reset(const std::vector<AgentID>& agents, const GameState<AgentID>& initialState, SharedInfo& sharedInfo) override {
 		for (DoneCondition<AgentID, RGSim::GameState<AgentID>>* condition : m_conditions) {
 			condition->Reset(agents, initialState, sharedInfo);
 		}
 	};
-	AGENT_MAP(bool) IsDone(const std::vector<AgentID> agents, RGSim::GameState<AgentID>& state, SharedInfo& sharedInfo) {
+	const AGENT_MAP(bool) IsDone(const std::vector<AgentID>& agents, const RGSim::GameState<AgentID>& state, SharedInfo& sharedInfo) override {
 		bool isDone = false;
 		for (DoneCondition<AgentID, RGSim::GameState<AgentID>>* condition : m_conditions) {
-			AGENT_MAP(bool) isDoneCondition = condition->IsDone(agents, state, sharedInfo);
+			const AGENT_MAP(bool)& isDoneCondition = condition->IsDone(agents, state, sharedInfo);
 
 			for (auto& [agentID, done] : isDoneCondition) {
 				isDone = done;
@@ -39,6 +39,8 @@ public:
 
 		return dones;
 	}
+
+	TRACY_ALLOC("Any done condition")
 private:
 	std::vector<DoneCondition<AgentID, RGSim::GameState<AgentID>>*> m_conditions;
 };

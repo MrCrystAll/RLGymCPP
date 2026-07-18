@@ -4,8 +4,10 @@
 cmake_minimum_required(VERSION 3.30...4.4)
 project("RLGymCPP" LANGUAGES CXX)
 
+option(RLGYM_BUILD_TESTS "Builds RLGym Tests" ON)
+
 # Add source to this project's executable.
-add_library (RLGymAPI INTERFACE "include/RLGym/API/Framework.h" "include/RLGym/API/RLGym.h" "include/RLGym/API/typing.h")
+add_library (RLGymAPI INTERFACE "include/RLGym/API/Framework.h" "include/RLGym/API/RLGym.h" "include/RLGym/API/typing.h" "include/RLGym/api.h" "include/RLGym/RocketLeague.h")
 target_include_directories(RLGymAPI INTERFACE "include")
 
 
@@ -68,4 +70,6 @@ if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET RLGymRocketLeague PROPERTY CXX_STANDARD 26)
 endif()
 
-# TODO: Add tests and install targets if needed.
+if(RLGYM_BUILD_TESTS)
+	add_subdirectory("tests")
+endif()

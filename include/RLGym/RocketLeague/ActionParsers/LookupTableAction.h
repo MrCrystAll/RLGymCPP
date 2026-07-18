@@ -6,10 +6,6 @@
 
 #include <RLGym/API/typing.h>
 
-#ifdef TRACY_ENABLE
-#include <tracy/Tracy.hpp>
-#endif
-
 #include <vector>
 #include <array>
 #include <string>
@@ -19,12 +15,12 @@ using namespace RLGYM_RL_NS::RGSim;
 
 START_RL_NS(ActionParsers)
 
-	template <typename AgentID>
+template <Hashable AgentID>
 class LookupTableAction : public ActionParser<AgentID, int, RocketSimAction, GameState<AgentID>, std::tuple<std::string, int>> {
 public:
 	LookupTableAction() { this->MakeLookupTable(); };
-	std::tuple<std::string, int> GetActionSpace(const AgentID& agent) override { return std::make_tuple(std::string("discrete"), static_cast<int>(this->m_lookupTable.size())); };
-	AGENT_MAP(RocketSimAction) ParseActions(const AGENT_MAP(int) actions, GameState<AgentID>& state, SharedInfo& sharedInfo) override {
+	const std::tuple<std::string, int> GetActionSpace(const AgentID& agent) override { return std::make_tuple(std::string("discrete"), static_cast<int>(this->m_lookupTable.size())); };
+	const AGENT_MAP(RocketSimAction) ParseActions(const AGENT_MAP(int)& actions, const GameState<AgentID>& state, SharedInfo& sharedInfo) override {
 #ifdef TRACY_ENABLE
 		ZoneScoped;
 #endif
@@ -39,8 +35,9 @@ public:
 		return parsedActions;
 		;
 	}
-	void Reset(const std::vector<AgentID> agents, GameState<AgentID>& initialState, SharedInfo& sharedInfo) override {}; // Noop
+	void Reset(const std::vector<AgentID>& agents, const GameState<AgentID>& initialState, SharedInfo& sharedInfo) override {}; // Noop
 
+	TRACY_ALLOC("Lookup Table parser")
 private:
 	std::vector<FloatArray8> m_lookupTable = {};
 

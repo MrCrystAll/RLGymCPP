@@ -13,11 +13,11 @@ using namespace RLGYM_RL_NS::RGSim;
 
 START_RL_NS(RewardFunctions)
 
-	template <typename AgentID>
+template <Hashable AgentID>
 class TouchReward : public RewardFunction<AgentID, GameState<AgentID>, float> {
 public:
-	void Reset(const std::vector<AgentID> agents, GameState<AgentID>& initialState, SharedInfo& sharedInfo) override {}; // Noop
-	AGENT_MAP(float) GetRewards(const std::vector<AgentID> agents, GameState<AgentID>& state, SharedInfo& sharedInfo) override {
+	void Reset(const std::vector<AgentID>& agents, const GameState<AgentID>& initialState, SharedInfo& sharedInfo) override {}; // Noop
+	const AGENT_MAP(float) GetRewards(const std::vector<AgentID>& agents, const GameState<AgentID>& state, SharedInfo& sharedInfo) override {
 #ifdef TRACY_ENABLE
 		ZoneScopedNC("Reward computation", tracy::Color::Green);
 #endif
@@ -26,12 +26,14 @@ public:
 
 		for (const AgentID& agent : agents) {
 			rewards.emplace(
-				agent, static_cast<float>(state.cars[agent].ballTouches > 0)
+				agent, static_cast<float>(state.cars.at(agent).ballTouches > 0)
 			);
 		}
 
 		return rewards;
 	}
+
+	TRACY_ALLOC("Touch reward function")
 };
 
 END_RL_NS

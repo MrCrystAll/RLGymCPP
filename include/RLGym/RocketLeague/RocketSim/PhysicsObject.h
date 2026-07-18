@@ -20,7 +20,7 @@ class PhysicsObject {
 public:
 	Vector3f position = Vector3f::Zero(), linearVelocity = Vector3f::Zero(), angularVelocity = Vector3f::Zero();
 
-	PhysicsObject Inverted() {
+	const PhysicsObject Inverted() const {
 		PhysicsObject inv = PhysicsObject();
 		inv.position = this->position.cwiseProduct(INV_VEC);
 		inv.linearVelocity = this->linearVelocity.cwiseProduct(INV_VEC);
@@ -30,6 +30,12 @@ public:
 			inv.SetRotMat(this->GetRotMat() * INV_MTX);
 		}
 		return inv;
+	}
+
+	const Vector4f GetQuaternion() const {
+		if (this->m_quaternion.has_value()) return this->m_quaternion.value();
+		if (this->m_rotationMtx.has_value()) return RotMatToQuat(this->m_rotationMtx.value());
+		if (this->m_eulerAngles.has_value()) return RotMatToQuat(EulerToRotation(this->m_eulerAngles.value()));
 	}
 
 	const Vector4f GetQuaternion() {
@@ -54,6 +60,12 @@ public:
 		this->m_rotationMtx = std::nullopt;
 	}
 
+	const Matrix3f GetRotMat() const {
+		if (this->m_rotationMtx.has_value()) return this->m_rotationMtx.value();
+		if (this->m_quaternion.has_value()) return QuatToRotMat(this->m_quaternion.value());
+		if (this->m_eulerAngles.has_value()) return EulerToRotation(this->m_eulerAngles.value());
+	}
+
 	const Matrix3f GetRotMat() {
 		if (this->m_rotationMtx.has_value()) {
 			return this->m_rotationMtx.value();
@@ -74,6 +86,12 @@ public:
 		this->m_rotationMtx = rotMat;
 		this->m_eulerAngles = std::nullopt;
 		this->m_quaternion = std::nullopt;
+	}
+
+	const Vector3f GetEulerAngles() const {
+		if (this->m_eulerAngles.has_value()) return this->m_eulerAngles.value();
+		if (this->m_quaternion.has_value()) return QuatToEuler(this->m_quaternion.value());
+		if (this->m_rotationMtx.has_value()) return QuatToEuler(RotMatToQuat(this->m_rotationMtx.value()));
 	}
 
 	const Vector3f GetEulerAngles() {
@@ -98,14 +116,14 @@ public:
 		this->m_quaternion = std::nullopt;
 	}
 
-	const Vector3f Forward() { return this->GetRotMat().row(0); };
-	const Vector3f Right() { return this->GetRotMat().row(1); };
-	const Vector3f Left() { return this->Right() * -1; };
-	const Vector3f Up() { return this->GetRotMat().row(2); };
+	const Vector3f Forward() const { return this->GetRotMat().row(0); };
+	const Vector3f Right() const { return this->GetRotMat().row(1); };
+	const Vector3f Left() const { return this->Right() * -1; };
+	const Vector3f Up() const { return this->GetRotMat().row(2); };
 
-	const float Pitch() { return this->GetEulerAngles()(0); };
-	const float Yaw() { return this->GetEulerAngles()(1); };
-	const float Roll() { return this->GetEulerAngles()(2); };
+	const float Pitch() const { return this->GetEulerAngles()(0); };
+	const float Yaw() const { return this->GetEulerAngles()(1); };
+	const float Roll() const { return this->GetEulerAngles()(2); };
 
 
 private:

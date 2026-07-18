@@ -13,7 +13,7 @@ using namespace RLGYM_RL_NS::RGSim;
 
 START_RL_NS(StateMutators)
 
-	template<typename AgentID>
+template<Hashable AgentID>
 class FixedTeamSizeMutator : public StateMutator<GameState<AgentID>> {
 public:
 	FixedTeamSizeMutator(
@@ -21,7 +21,7 @@ public:
 	) : m_blueSize(blueSize), m_orangeSize(orangeSize) {
 	};
 
-	void Apply(GameState<AgentID>& state, SharedInfo& sharedInfo) {
+	void Apply(GameState<AgentID>& state, SharedInfo& sharedInfo) override {
 		assert(state.cars.size() == 0);
 
 		for (int i = 0; i < this->m_blueSize; i++) {
@@ -42,6 +42,8 @@ public:
 			);
 		}
 	}
+
+	TRACY_ALLOC("Fixed team size mutator")
 protected:
 	int m_blueSize, m_orangeSize;
 };

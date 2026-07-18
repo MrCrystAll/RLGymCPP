@@ -50,7 +50,7 @@ const std::array<float, 5> SPAWN_ORANGE_YAW = { {
     -0.50f * PI
 } };
 
-template<typename AgentID>
+template<Hashable AgentID>
 class KickoffMutator : public StateMutator<GameState<AgentID>> {
 public:
     void Apply(GameState<AgentID>& state, SharedInfo& sharedInfo) {
@@ -88,6 +88,8 @@ public:
             car.boostAmount = 33.3;
         }
     }
+
+    TRACY_ALLOC("Kickoff mutator")
 };
 
 END_RL_NS
