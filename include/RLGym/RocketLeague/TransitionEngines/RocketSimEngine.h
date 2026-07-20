@@ -10,10 +10,6 @@
 #include <RocketSim/RocketSim.h>
 #include <RocketSim/Sim/GameEventTracker/GameEventTracker.h>
 
-#ifdef TRACY_ENABLE
-#include <tracy/Tracy.hpp>
-#endif
-
 #include <array>
 #include <ranges>
 #include <filesystem>

@@ -1,15 +1,10 @@
 #pragma once
 
+#include <RLGym/RocketLeague/Framework.h>
 #include <RLGym/RocketLeague/RocketSim/GameState.h>
 #include <RLGym/RocketLeague/RocketSim/typing.h>
 
 #include <RLGym/API/typing.h>
-
-#ifdef TRACY_ENABLE
-
-#include <tracy/Tracy.hpp>
-
-#endif
 
 #include <string>
 #include <optional>

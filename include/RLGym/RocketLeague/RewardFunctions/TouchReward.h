@@ -4,10 +4,6 @@
 #include <RLGym/RocketLeague/RocketSim/GameState.h>
 #include <RLGym/API/typing.h>
 
-#ifdef TRACY_ENABLE
-#include <tracy/Tracy.hpp>
-#endif
-
 using namespace RLGYM_API_NS;
 using namespace RLGYM_RL_NS::RGSim;
 
