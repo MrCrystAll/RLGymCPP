@@ -19,9 +19,23 @@ using namespace RLGYM_RL_NS::RGSim;
 
 START_RL_NS(ObsBuilders)
 
-	template<Hashable AgentID>
+/// <summary>
+/// The default observation builder.
+/// </summary>
+/// <typeparam name="AgentID">The type of the agent ID</typeparam>
+template<Hashable AgentID>
 class DefaultObs : public ObsBuilder<AgentID, std::vector<float>, GameState<AgentID>, std::tuple<std::string, int>> {
 public:
+
+	/// <summary>
+	/// The default observation builder.
+	/// </summary>
+	/// <param name="zeroPadding">Number of max cars per team, if not std::nullopt the obs will be zero padded</param>
+	/// <param name="positionCoefficient">Position normalization coefficient</param>
+	/// <param name="linearVelocityCoefficient">Linear velocity normalization coefficient</param>
+	/// <param name="angularVelocityCoefficient">Angular velocity normalization coefficient</param>
+	/// <param name="padTimerCoefficient">Boost pad timers normalization coefficient</param>
+	/// <param name="boostCoefficient">Player boost value normalization coefficient</param>
 	DefaultObs(
 		std::optional<int> zeroPadding = 3,
 		Vector3f positionCoefficient = { 1 / 2300.0, 1 / 2300.0 , 1 / 2300.0 },

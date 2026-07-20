@@ -10,6 +10,10 @@ using namespace RLGYM_RL_NS::RGSim;
 
 START_RL_NS(DoneConditions)
 
+/// <summary>
+/// A DoneCondition that is satisfied when a goal is scored.
+/// </summary>
+/// <typeparam name="AgentID">The type of the agent ID</typeparam>
 template<Hashable AgentID>
 class GoalCondition : public DoneCondition<AgentID, GameState<AgentID>> {
 public:

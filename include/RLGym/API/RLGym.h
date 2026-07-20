@@ -6,9 +6,34 @@
 
 START_API_NS
 
+/// <summary>
+/// The main RLGym class. This class is responsible for managing the environment and the interactions between
+/// the different components of the environment.It is the main interface for the user to interact with an environment.
+/// </summary>
+/// <typeparam name="ObsType">The type of the generated observations (Defined by the observation builder)</typeparam>
+/// <typeparam name="ActionType">The type of the expected actions (Defined by the action parser)</typeparam>
+/// <typeparam name="EngineActionType">The type of the engine's actions (Defined by the transition engine)</typeparam>
+/// <typeparam name="RewardType">The type of the generated rewards (Defined by the reward function)</typeparam>
+/// <typeparam name="StateType">The type of the state representing the environment (Defined by the transition engine)</typeparam>
+/// <typeparam name="ObsSpaceType">The type of the observation builder's space (Defined by the observation builder)</typeparam>
+/// <typeparam name="ActionSpaceType">The type of the action parser's space (Defined by the action parser)</typeparam>
+/// <typeparam name="AgentID">The type of the agent ID (Usually defined by the state mutator)</typeparam>
 template <Hashable AgentID, typename ObsType, typename ActionType, typename EngineActionType, typename RewardType, typename StateType, typename ObsSpaceType, typename ActionSpaceType>
 class RLGym {
 public:
+	/// <summary>
+	/// The main RLGym class. This class is responsible for managing the environment and the interactions between
+	/// the different components of the environment.It is the main interface for the user to interact with an environment.
+	/// </summary>
+	/// <param name="stateMutator">The StateMutator used to modify the state of the environment.</param>
+	/// <param name="obsBuilder">The ObsBuilder used to build observations for the agents.</param>
+	/// <param name="actionParser">The ActionParser used to parse actions from the agents into engine actions.</param>
+	/// <param name="rewardFunction">The RewardFunction used to calculate rewards for the agents.</param>
+	/// <param name="transitionEngine">The TransitionEngine used to transition the environment from one state to another.</param>
+	/// <param name="terminationCondition">The DoneCondition used to determine if the episode is terminated.</param>
+	/// <param name="truncationCondition">The DoneCondition used to determine if the episode is truncated.</param>
+	/// <param name="sharedInfoProvider">The SharedInfoProvider used to provide shared information across all config objects.</param>
+	/// <param name="renderer">The Renderer used to render the environment.</param>
 	RLGym(
 		StateMutator<StateType>* stateMutator,
 		ObsBuilder<AgentID, ObsType, StateType, ObsSpaceType>* obsBuilder,
@@ -138,7 +163,7 @@ public:
 			}
 		}
 
-		const AGENT_MAP(RewardType) rewards = this->m_rewardFunction->GetRewards(agents, newState, this->m_sharedInfo);
+		const AGENT_MAP(RewardType) rewards = this->m_rewardFunction->GetRewards(agents, newState, isTerminated, isTruncated, this->m_sharedInfo);
 		
 		EnvReturn<AgentID, ObsType, RewardType> result = {};
 

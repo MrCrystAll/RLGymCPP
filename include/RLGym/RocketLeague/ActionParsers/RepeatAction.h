@@ -15,6 +15,14 @@ using namespace RLGYM_RL_NS::RGSim;
 
 START_RL_NS(ActionParsers)
 
+/// <summary>
+/// A simple wrapper to emulate tick skip.
+
+/// Repeats every action for a specified number of ticks.
+/// </summary>
+/// <typeparam name="ActionType">The type of action the parser being repeated by this class uses</typeparam>
+/// <typeparam name="ActionSpaceType">The type of action space the parser being repeated by this class has</typeparam>
+/// <typeparam name="AgentID">The type of the agent ID</typeparam>
 template<Hashable AgentID, typename ActionType, typename ActionSpaceType>
 class RepeatAction : public ActionParser<AgentID, ActionType, RocketSimAction, GameState<AgentID>, ActionSpaceType> {
 public:

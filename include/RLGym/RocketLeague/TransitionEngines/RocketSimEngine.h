@@ -28,9 +28,24 @@ namespace fs = std::filesystem;
 #define ROCKETSIM_STATE(AgentIDType) GameState<AgentIDType>
 
 START_RL_NS(TransitionEngines)
+
+/// <summary>
+/// A headless Rocket League TransitionEngine backed by RocketSim.
+/// 
+/// Simulates a normal soccar game with a single ball and any number of cars.
+/// </summary>
+/// <typeparam name="AgentID"></typeparam>
 template<Hashable AgentID>
 class RocketSimEngine : public TransitionEngine<AgentID, GameState<AgentID>, RocketSimAction> {
 public:
+
+	/// <summary>
+	/// A headless Rocket League TransitionEngine backed by RocketSim.
+	/// 
+	/// Simulates a normal soccar game with a single ball and any number of cars.
+	/// </summary>
+	/// <param name="rlbotDelay">Enables RLBot-like 1 tick delay for actions. This forces the first action of the episode to no - op</param>
+	/// <param name="gamemode">Allows you to select any other RocketSim supported GameMode</param>
 	RocketSimEngine(bool rlbotDelay = true, RocketSim::GameMode gamemode = RocketSim::GameMode::SOCCAR) : m_rlbotDelay(rlbotDelay), m_mode(gamemode) {
 		RocketSim::Init(fs::current_path() / "resources" / "RocketLeague" / "collision_meshes", true);
 		this->m_arena = RocketSim::Arena::Create(gamemode);

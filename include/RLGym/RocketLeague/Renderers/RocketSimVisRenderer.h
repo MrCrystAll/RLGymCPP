@@ -21,6 +21,10 @@ using namespace RLGYM_RL_NS::RGSim;
 
 START_RL_NS(Renderers)
 
+/// <summary>
+/// A renderer that uses RocketSimVis (https://github.com/ZealanL/RocketSimVis) to display the game state
+/// </summary>
+/// <typeparam name="AgentID">The type of the agent ID</typeparam>
 template<Hashable AgentID>
 class RocketSimVisRenderer : public Renderer<GameState<AgentID>> {
 public:

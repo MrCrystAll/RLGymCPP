@@ -50,6 +50,10 @@ const std::array<float, 5> SPAWN_ORANGE_YAW = { {
     -0.50f * PI
 } };
 
+/// <summary>
+/// A StateMutator that sets up the game state for a kickoff.
+/// </summary>
+/// <typeparam name="AgentID">The type of the agent ID</typeparam>
 template<Hashable AgentID>
 class KickoffMutator : public StateMutator<GameState<AgentID>> {
 public:

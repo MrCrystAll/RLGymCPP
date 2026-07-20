@@ -9,6 +9,10 @@ using namespace RLGYM_API_NS;
 
 START_RL_NS(DoneConditions)
 
+/// <summary>
+/// A DoneCondition that is satisfied when any of the provided conditions are satisfied.
+/// </summary>
+/// <typeparam name="AgentID">The type of the agent ID</typeparam>
 template<Hashable AgentID>
 class AnyCondition : public DoneCondition<AgentID, RGSim::GameState<AgentID>> {
 public:

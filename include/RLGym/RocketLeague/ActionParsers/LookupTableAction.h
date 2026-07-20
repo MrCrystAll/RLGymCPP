@@ -15,6 +15,10 @@ using namespace RLGYM_RL_NS::RGSim;
 
 START_RL_NS(ActionParsers)
 
+/// <summary>
+/// World-famous discrete action parser which uses a lookup table to reduce the number of possible actions from 1944 to 90
+/// </summary>
+/// <typeparam name="AgentID">The type of the agent ID</typeparam>
 template <Hashable AgentID>
 class LookupTableAction : public ActionParser<AgentID, int, RocketSimAction, GameState<AgentID>, std::tuple<std::string, int>> {
 public:

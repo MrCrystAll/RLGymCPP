@@ -13,11 +13,15 @@ using namespace RLGYM_RL_NS::RGSim;
 
 START_RL_NS(RewardFunctions)
 
+/// <summary>
+/// A RewardFunction that gives a reward of 1 if the agent touches the ball, 0 otherwise.
+/// </summary>
+/// <typeparam name="AgentID">The type of the agent ID</typeparam>
 template <Hashable AgentID>
 class TouchReward : public RewardFunction<AgentID, GameState<AgentID>, float> {
 public:
 	void Reset(const std::vector<AgentID>& agents, const GameState<AgentID>& initialState, SharedInfo& sharedInfo) override {}; // Noop
-	const AGENT_MAP(float) GetRewards(const std::vector<AgentID>& agents, const GameState<AgentID>& state, SharedInfo& sharedInfo) override {
+	const AGENT_MAP(float) GetRewards(const std::vector<AgentID>& agents, const GameState<AgentID>& state, const AGENT_MAP(bool)& isTerminated, const AGENT_MAP(bool)& isTruncated, SharedInfo& sharedInfo) override {
 #ifdef TRACY_ENABLE
 		ZoneScopedNC("Reward computation", tracy::Color::Green);
 #endif

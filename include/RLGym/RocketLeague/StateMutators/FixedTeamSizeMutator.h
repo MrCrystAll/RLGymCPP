@@ -13,9 +13,18 @@ using namespace RLGYM_RL_NS::RGSim;
 
 START_RL_NS(StateMutators)
 
+/// <summary>
+/// A StateMutator that initializes the game with a fixed number of cars on each team.
+/// </summary>
+/// <typeparam name="AgentID">The type of the agent ID</typeparam>
 template<Hashable AgentID>
 class FixedTeamSizeMutator : public StateMutator<GameState<AgentID>> {
 public:
+	/// <summary>
+	/// A StateMutator that initializes the game with a fixed number of cars on each team.
+	/// </summary>
+	/// <param name="blueSize">The amount of agents in the blue team.</param>
+	/// <param name="orangeSize">The amount of agents in the orange team.</param>
 	FixedTeamSizeMutator(
 		int blueSize = 1, int orangeSize = 1
 	) : m_blueSize(blueSize), m_orangeSize(orangeSize) {
