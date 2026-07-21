@@ -83,9 +83,9 @@ private:
     json PhysicsToJSON(const PhysicsObject& physObj) {
         json j = {};
 
-        j["pos"] = std::span<float, 3>(physObj.position.data(), 3);
-        j["vel"] = std::span<float, 3>(physObj.linearVelocity.data(), 3);
-        j["ang_vel"] = std::span<float, 3>(physObj.angularVelocity.data(), 3);
+        j["pos"] = std::span<const float, 3>(physObj.position.data(), 3);
+        j["vel"] = std::span<const float, 3>(physObj.linearVelocity.data(), 3);
+        j["ang_vel"] = std::span<const float, 3>(physObj.angularVelocity.data(), 3);
         j["forward"] = std::span<const float, 3>(physObj.Forward().data(), 3);
         j["up"] = std::span<const float, 3>(physObj.Up().data(), 3);
         return j;
@@ -117,11 +117,11 @@ private:
         j["cars"] = players;
 
         std::vector<bool> boostPadStates = {};
-        std::vector<std::span<float, 3>> boostPadLocations = {};
+        std::vector<std::span<const float, 3>> boostPadLocations = {};
 
         for (int i = 0; i < state.boostPads.size(); i++) {
             boostPadStates.push_back(state.boostPads[i].cooldownTimer == 0);
-            boostPadLocations.push_back(std::span<float, 3>(state.boostPads[i].location.data(), 3));
+            boostPadLocations.push_back(std::span<const float, 3>(state.boostPads[i].location.data(), 3));
         }
 
         j["boost_pad_states"] = boostPadStates;

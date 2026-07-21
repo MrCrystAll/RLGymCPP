@@ -162,11 +162,11 @@ int main() {
 		new DoneConditions::TimeoutCondition<Agent>(10),
 		std::nullopt,
 		std::nullopt,
-		std::nullopt
+		new Renderers::RocketSimVisRenderer<Agent>()
 	);
 
 	const int nSteps = 100'000;
-	const bool render = false;
+	const bool render = true;
 
 	auto start = std::chrono::high_resolution_clock::now();
 
@@ -192,17 +192,17 @@ int main() {
 			actions.clear();
 
 			for (auto& agent : env->GetAgents()) {
-				actions[agent] = 1;
+				actions[agent] = RocketSim::Math::RandInt(0, 90);
 			}
 
 			auto& results = env->Step(actions);
 
-			i += results.observations.size();
+			i += results->observations.size();
 
 			stepsPerSecond++;
-			obsBuiltPerSecond += results.observations.size();
+			obsBuiltPerSecond += results->observations.size();
 
-			for (auto& [agent, terminated] : results.terminated) {
+			for (auto& [agent, terminated] : results->terminated) {
 				if (terminated) {
 					env->Reset();
 					isTerminated = true;
@@ -212,7 +212,7 @@ int main() {
 
 			if (isTerminated) continue;
 
-			for (auto& [agent, truncated] : results.truncated) {
+			for (auto& [agent, truncated] : results->truncated) {
 				if (truncated) {
 					env->Reset();
 					isTruncated = true;

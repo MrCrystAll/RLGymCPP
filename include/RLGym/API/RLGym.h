@@ -2,7 +2,9 @@
 
 #include <RLGym/API/typing.h>
 #include <RLGym/API/Framework.h>
+
 #include <optional>
+#include <memory>
 
 START_API_NS
 
@@ -126,7 +128,7 @@ public:
 		return this->m_obsBuilder->BuildObs(agents, initialState, this->m_sharedInfo);
 	}
 
-	virtual const EnvReturn<AgentID, ObsType, RewardType> Step(
+	virtual const std::unique_ptr<EnvReturn<AgentID, ObsType, RewardType>> Step(
 		AGENT_MAP(ActionType) actions
 	) {
 #ifdef TRACY_ENABLE
@@ -165,14 +167,14 @@ public:
 
 		const AGENT_MAP(RewardType) rewards = this->m_rewardFunction->GetRewards(agents, newState, isTerminated, isTruncated, this->m_sharedInfo);
 		
-		EnvReturn<AgentID, ObsType, RewardType> result = {};
+		std::unique_ptr<EnvReturn<AgentID, ObsType, RewardType>> result = std::make_unique<EnvReturn<AgentID, ObsType, RewardType>>();
 
-		result.observations = obs;
-		result.rewards = rewards;
-		result.terminated = isTerminated;
-		result.truncated = isTruncated;
+		result->observations = obs;
+		result->rewards = rewards;
+		result->terminated = isTerminated;
+		result->truncated = isTruncated;
 		
-		return result;
+		return std::move(result);
 	};
 
 	virtual void Render() {

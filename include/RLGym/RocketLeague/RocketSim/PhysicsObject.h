@@ -64,6 +64,9 @@ public:
 		if (this->m_rotationMtx.has_value()) return this->m_rotationMtx.value();
 		if (this->m_quaternion.has_value()) return QuatToRotMat(this->m_quaternion.value());
 		if (this->m_eulerAngles.has_value()) return EulerToRotation(this->m_eulerAngles.value());
+
+		//Error if we arrive here
+		return this->m_rotationMtx.value();
 	}
 
 	const Matrix3f GetRotMat() {
@@ -92,6 +95,8 @@ public:
 		if (this->m_eulerAngles.has_value()) return this->m_eulerAngles.value();
 		if (this->m_quaternion.has_value()) return QuatToEuler(this->m_quaternion.value());
 		if (this->m_rotationMtx.has_value()) return QuatToEuler(RotMatToQuat(this->m_rotationMtx.value()));
+
+		return this->m_eulerAngles.value();
 	}
 
 	const Vector3f GetEulerAngles() {

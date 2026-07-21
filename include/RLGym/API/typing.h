@@ -44,6 +44,10 @@ struct EnvReturn {
 	AGENT_MAP(RewardType) rewards;
 	AGENT_MAP(bool) terminated;
 	AGENT_MAP(bool) truncated;
+
+	EnvReturn() = default;
+	EnvReturn(const EnvReturn&) = delete;
+	EnvReturn& operator=(const EnvReturn&) = delete;
 };
 
 template <Hashable AgentID, typename StateType>

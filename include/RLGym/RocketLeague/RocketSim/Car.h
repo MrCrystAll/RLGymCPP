@@ -53,6 +53,10 @@ public:
             true) >= 3;
     }
 
+    void SetOnGround(bool onGround) {
+        this->wheelsWithContact = { onGround, onGround, onGround, onGround };
+    }
+
     const bool HasFlip() const {
         return !hasDoubleJumped
             && !hasFlipped
