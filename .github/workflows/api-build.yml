@@ -74,7 +74,7 @@ jobs:
       run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }}
 
     - name: Install
-      run: cmake --install ${{ steps.strings.outputs.install-output-dir }} --config ${{ matrix.build_type }}
+      run: cmake --install ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }}
       
     - name: Package library (Windows)
       if: matrix.os == 'windows-latest'
