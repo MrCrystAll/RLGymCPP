@@ -66,6 +66,7 @@ jobs:
         -DCMAKE_INSTALL_PREFIX=${{ steps.strings.outputs.install-output-dir }}
         -DRLGYM_BUILD_API=ON
         -DRLGYM_INSTALL_API=ON
+        -DRLGYM_BUILD_EXAMPLE=OFF
         -S ${{ github.workspace }}
 
     - name: Build
