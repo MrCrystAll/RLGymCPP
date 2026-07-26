@@ -78,16 +78,23 @@ jobs:
     - name: Package library (Windows)
       if: matrix.os == 'windows-latest'
       shell: pwsh
-      working-directory: ${{ steps.strings.outputs.build-output-dir }}
       run: |
-        Compress-Archive -Path "${{ steps.strings.outputs.install-output-dir }}/*" -DestinationPath "../RLGymAPI-windows.zip"
+        Compress-Archive -Path "${{ steps.strings.outputs.install-output-dir }}/*" -DestinationPath "RLGymAPI-windows.zip"
       
     - name: Package library (Linux/macOS)
       if: matrix.os != 'windows-latest'
       shell: bash
-      working-directory: ${{ steps.strings.outputs.build-output-dir }}
       run: |
-        tar -czvf "../RLGymAPI-linux.tar.gz" -C ${{ steps.strings.outputs.install-output-dir }} .
+        tar -czvf "RLGymAPI-linux.tar.gz" -C ${{ steps.strings.outputs.install-output-dir }} .
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v7
+      with:
+        name: ${{ matrix.config.name }}-install
+        path: |
+          RLGymCPP-windows.zip
+          RLGymCPP-linux.tar.gz
+        retention-days: 1 # You can adjust this as needed
 
   release:
     needs: build # This job depends on the successful completion of the build job
