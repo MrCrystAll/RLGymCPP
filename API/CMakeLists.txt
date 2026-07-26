@@ -4,7 +4,7 @@
 cmake_minimum_required(VERSION 3.30...4.4)
 project("RLGymAPI" LANGUAGES CXX VERSION 0.0.1)
 
-option(RLGYM_API_INSTALL "Installs RLGym" ${PROJECT_IS_TOP_LEVEL})
+option(RLGYM_INSTALL_API "Installs RLGym" ${PROJECT_IS_TOP_LEVEL})
 
 # Add source to this project's executable.
 add_library (${PROJECT_NAME} INTERFACE "include/RLGym/API/Framework.h" "include/RLGym/API/RLGym.h" "include/RLGym/API/typing.h" "include/RLGym/api.h")
@@ -17,7 +17,7 @@ if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 26)
 endif()
 
-if(RLGYM_API_INSTALL)
+if(RLGYM_INSTALL_API)
 	include(CMakePackageConfigHelpers)
 
 	write_basic_package_version_file(
