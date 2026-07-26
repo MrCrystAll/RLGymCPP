@@ -6,8 +6,11 @@ project("RLGymCPP" LANGUAGES CXX VERSION 0.0.1)
 
 option(RLGYM_BUILD_API "Builds the API" OFF)
 option(RLGYM_BUILD_ROCKET_LEAGUE "Builds the Rocket League implementation" OFF)
+option(RLGYM_BUILD_EXAMPLE "Builds the example" ON)
 
-add_subdirectory("example")
+if(RLGYM_BUILD_EXAMPLE)
+	add_subdirectory("example")
+endif()
 
 if(RLGYM_BUILD_API)
 	add_subdirectory("API")
