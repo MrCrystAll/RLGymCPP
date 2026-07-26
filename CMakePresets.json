@@ -40,7 +40,9 @@
       "displayName": "x64 Release",
       "inherits": "x64-debug",
       "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Release"
+        "CMAKE_BUILD_TYPE": "Release",
+        "RLGYM_API_INSTALL": true,
+        "RLGYM_RL_INSTALL": true
       }
     },
     {

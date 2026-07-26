@@ -1,0 +1,8 @@
+@PACKAGE_INIT@
+
+include("${CMAKE_CURRENT_LIST_DIR}/RLGymAPITargets.cmake")
+check_required_components("RLGymAPI")
+
+if (NOT TARGET RLGym::API)
+  add_library(RLGym::API ALIAS RLGymAPI)
+endif()

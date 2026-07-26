@@ -456,6 +456,9 @@ FodyWeavers.xsd
 # End of https://www.toptal.com/developers/gitignore/api/visualstudio,c++,cmake
 
 libsrc/
+RocketLeague/tests/resources
 out/
 
-tests/resources
+
+example/resources
+example/ext
