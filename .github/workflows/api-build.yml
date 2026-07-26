@@ -90,10 +90,10 @@ jobs:
     - name: Upload artifact
       uses: actions/upload-artifact@v7
       with:
-        name: ${{ matrix.config.name }}-install
+        name: ${{ matrix.os }}-install
         path: |
-          RLGymCPP-windows.zip
-          RLGymCPP-linux.tar.gz
+          RLGymAPI-windows.zip
+          RLGymAPI-linux.tar.gz
         retention-days: 1 # You can adjust this as needed
 
   release:
@@ -127,8 +127,8 @@ jobs:
         name: ${{ github.ref_name }} # Sets the release title to the tag name
         body: ${{ steps.extract_release_notes.outputs.release_notes }} # Use the extracted changelog content
         files: |
-          artifacts/*/RLGymCPP-windows.zip
-          artifacts/*/RLGymCPP-linux.tar.gz
+          artifacts/*/RLGymAPI-windows.zip
+          artifacts/*/RLGymAPI-linux.tar.gz
         draft: false
         prerelease: false
       env:
