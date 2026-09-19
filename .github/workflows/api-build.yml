@@ -168,7 +168,7 @@ jobs:
         retention-days: 1 # You can adjust this as needed
 
   release:
-    needs: build # This job depends on the successful completion of the build job
+    needs: build-api # This job depends on the successful completion of the build job
     runs-on: ubuntu-latest
     permissions:
       contents: write
