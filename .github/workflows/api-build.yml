@@ -58,6 +58,7 @@ jobs:
         -DRLGYM_BUILD_API=ON
         -DRLGYM_INSTALL_API=ON
         -DRLGYM_BUILD_EXAMPLE=OFF
+        -DRLGYM_BUILD_ROCKET_LEAGUE=OFF
         -S ${{ github.workspace }}
 
     - name: Build
@@ -134,7 +135,7 @@ jobs:
         -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }}
         -DCMAKE_C_COMPILER=${{ matrix.c_compiler }}
         -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
-        -DRLGYM_BUILD_RL=ON
+        -DRLGYM_BUILD_ROCKET_LEAGUE=ON
         -DRLGYM_INSTALL_RL=ON
         -DRLGYM_BUILD_EXAMPLE=OFF
         -S ${{ github.workspace }}
