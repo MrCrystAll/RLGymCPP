@@ -80,12 +80,22 @@ public:
 
     TRACY_ALLOC("RocketSimVis renderer")
 private:
-    json PhysicsToJSON(const PhysicsObject& physObj) {
+    /*json PhysicsToJSON(const PhysicsObject& physObj) {
         json j = {};
 
         j["pos"] = std::span<const float, 3>(physObj.position.data(), 3);
         j["vel"] = std::span<const float, 3>(physObj.linearVelocity.data(), 3);
         j["ang_vel"] = std::span<const float, 3>(physObj.angularVelocity.data(), 3);
+        j["forward"] = std::span<const float, 3>(physObj.Forward().data(), 3);
+        j["up"] = std::span<const float, 3>(physObj.Up().data(), 3);
+        return j;
+    };*/
+
+    json PhysicsToJSON(const PhysicsObject& physObj) {
+        json j = {};
+
+        j["position"] = std::span<const float, 3>(physObj.position.data(), 3);
+        j["velocity"] = std::span<const float, 3>(physObj.linearVelocity.data(), 3);
         j["forward"] = std::span<const float, 3>(physObj.Forward().data(), 3);
         j["up"] = std::span<const float, 3>(physObj.Up().data(), 3);
         return j;
@@ -108,9 +118,9 @@ private:
     json GameStateToJson(const GameState<AgentID>& state) {
         json j = {};
 
-        j["gamemode"] = "soccar";
+        //j["gamemode"] = "soccar";
         j["ball_phys"] = this->PhysicsToJSON(state.ball);
-        std::vector<json> players;
+        /*std::vector<json> players;
         for (auto& [agentId, car] : state.cars) {
             players.push_back(this->CarToJSON(agentId, car));
         }
@@ -125,7 +135,7 @@ private:
         }
 
         j["boost_pad_states"] = boostPadStates;
-        j["boost_pad_locations"] = boostPadLocations;
+        j["boost_pad_locations"] = boostPadLocations;*/
 
         return j;
 

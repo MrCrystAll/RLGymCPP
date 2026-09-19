@@ -128,7 +128,7 @@ public:
 		return this->m_obsBuilder->BuildObs(agents, initialState, this->m_sharedInfo);
 	}
 
-	virtual const std::unique_ptr<EnvReturn<AgentID, ObsType, RewardType>> Step(
+	virtual const EnvReturn<AgentID, ObsType, RewardType> Step(
 		AGENT_MAP(ActionType) actions
 	) {
 #ifdef TRACY_ENABLE
@@ -166,15 +166,10 @@ public:
 		}
 
 		const AGENT_MAP(RewardType) rewards = this->m_rewardFunction->GetRewards(agents, newState, isTerminated, isTruncated, this->m_sharedInfo);
-		
-		std::unique_ptr<EnvReturn<AgentID, ObsType, RewardType>> result = std::make_unique<EnvReturn<AgentID, ObsType, RewardType>>();
-
-		result->observations = obs;
-		result->rewards = rewards;
-		result->terminated = isTerminated;
-		result->truncated = isTruncated;
-		
-		return std::move(result);
+	
+		return EnvReturn<AgentID, ObsType, RewardType>(
+			obs, rewards, isTerminated, isTruncated
+		);
 	};
 
 	virtual void Render() {

@@ -36,13 +36,20 @@
       }
     },
     {
+      "name": "x64-release-debug",
+      "displayName": "x64 Release (Debug)",
+      "inherits": "x64-debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo"
+      }
+    },
+    {
       "name": "x64-release",
       "displayName": "x64 Release",
       "inherits": "x64-debug",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release",
-        "RLGYM_API_INSTALL": true,
-        "RLGYM_RL_INSTALL": true
+        "ENABLE_TRACY":  false
       }
     },
     {

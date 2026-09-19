@@ -4,8 +4,13 @@
 cmake_minimum_required(VERSION 3.30...4.4)
 project("RLGymCPP" LANGUAGES CXX VERSION 0.0.1)
 
-option(RLGYM_BUILD_API "Builds the API" OFF)
-option(RLGYM_BUILD_ROCKET_LEAGUE "Builds the Rocket League implementation" OFF)
+
+if(${PROJECT_IS_TOP_LEVEL})
+	set(RLGYM_STANDALONE ON)
+endif()
+
+option(RLGYM_BUILD_API "Builds the API" ON)
+option(RLGYM_BUILD_ROCKET_LEAGUE "Builds the Rocket League implementation" ON)
 option(RLGYM_BUILD_EXAMPLE "Builds the example" ON)
 
 if(RLGYM_BUILD_EXAMPLE)

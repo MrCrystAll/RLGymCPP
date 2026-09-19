@@ -139,7 +139,7 @@ class EmptyStateMutator : public StateMutator<State> {
 int main() {
 	using namespace std::chrono_literals;
 
-	RLGym<Agent, Obs, Action, EngineAction, Reward, State, ObsSpace, ActionSpace>* env = new RLGym <
+	auto* env = new RLGym <
 		Agent,
 		Obs,
 		Action,
@@ -166,7 +166,7 @@ int main() {
 	);
 
 	const int nSteps = 100'000;
-	const bool render = true;
+	const bool render = false;
 
 	auto start = std::chrono::high_resolution_clock::now();
 

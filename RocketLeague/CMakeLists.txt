@@ -3,16 +3,22 @@ project("RLGymRocketLeague" LANGUAGES CXX VERSION 0.0.1)
 
 include(GNUInstallDirs)
 
-option(RLGYM_RL_BUILD_TESTS "Builds RLGym Rocket League Tests" ${PROJECT_IS_TOP_LEVEL})
-option(RLGYM_RL_INSTALL "Installs RLGym Rocket League" ${PROJECT_IS_TOP_LEVEL})
+option(RLGYM_INSTALL_RL "Installs RLGym Rocket League" ${RLGYM_STANDALONE})
 
-set(Eigen3_DIR "${CMAKE_CURRENT_SOURCE_DIR}/libsrc/eigen/share/eigen3/cmake")
-set(nlohmann_json_DIR "${CMAKE_CURRENT_SOURCE_DIR}/libsrc/json/share/cmake/nlohmann_json")
-set(RocketSim_DIR "${CMAKE_CURRENT_SOURCE_DIR}/libsrc/RocketSim/lib/cmake/RocketSim")
+if(NOT TARGET Eigen3::Eigen)
+	set(Eigen3_DIR ${CMAKE_SOURCE_DIR}/ext/eigen/share/eigen3/cmake)
+	find_package(Eigen3 CONFIG REQUIRED)
+endif()
 
-find_package(Eigen3 CONFIG REQUIRED)
-find_package(nlohmann_json CONFIG REQUIRED)
-find_package(RocketSim CONFIG REQUIRED)
+if(NOT TARGET nlohmann_json)
+	set(nlohmann_json_DIR ${CMAKE_SOURCE_DIR}/ext/json/share/cmake/nlohmann_json)
+	find_package(nlohmann_json CONFIG REQUIRED)
+endif()
+
+if(NOT TARGET RocketSim)
+	set(RocketSim_DIR ${CMAKE_SOURCE_DIR}/ext/RocketSim/lib/cmake/RocketSim)
+	find_package(RocketSim CONFIG REQUIRED)
+endif()
 
 # Add source to this project's executable.
 add_library (RLGymRocketLeague INTERFACE 
@@ -81,7 +87,7 @@ set_target_properties(RLGymRocketLeague PROPERTIES
     EXPORT_NAME RocketLeague
 )
 
-if(RLGYM_RL_INSTALL)
+if(RLGYM_INSTALL_RL)
 	include(CMakePackageConfigHelpers)
 
 	set(ROCKETSIM_INSTALL OFF)

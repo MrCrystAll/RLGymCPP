@@ -39,16 +39,37 @@ concept Hashable = requires(const T & t) {
 /// <typeparam name="RewardType">Type of the reward</typeparam>
 /// <typeparam name="AgentID">Type of the agent ID</typeparam>
 template<Hashable AgentID, typename ObsType, typename RewardType>
-struct EnvReturn {
-	AGENT_MAP(ObsType) observations;
-	AGENT_MAP(RewardType) rewards;
-	AGENT_MAP(bool) terminated;
-	AGENT_MAP(bool) truncated;
-
-	EnvReturn() = default;
+class EnvReturn {
+public:
+	EnvReturn(
+		AGENT_MAP(ObsType) observations,
+		AGENT_MAP(RewardType) rewards,
+		AGENT_MAP(bool) terminated,
+		AGENT_MAP(bool) truncated
+	);
 	EnvReturn(const EnvReturn&) = delete;
 	EnvReturn& operator=(const EnvReturn&) = delete;
+
+	// But allow move
+	EnvReturn(EnvReturn&&) = default;
+	EnvReturn& operator=(EnvReturn&&) = default;
+
+	const AGENT_MAP(ObsType)& GetObservations() const { return m_observations; }
+	const AGENT_MAP(RewardType)& GetRewards() const { return m_rewards; }
+	const AGENT_MAP(bool)& GetTerminated() const { return m_terminated; }
+	const AGENT_MAP(bool)& GetTruncated() const { return m_truncated; }
+private:
+	AGENT_MAP(ObsType) m_observations;
+	AGENT_MAP(RewardType) m_rewards;
+	AGENT_MAP(bool) m_terminated;
+	AGENT_MAP(bool) m_truncated;
 };
+
+template<Hashable AgentID, typename ObsType, typename RewardType>
+inline EnvReturn<AgentID, ObsType, RewardType>::EnvReturn(AGENT_MAP(ObsType) observations, AGENT_MAP(RewardType) rewards, AGENT_MAP(bool) terminated, AGENT_MAP(bool) truncated): m_observations(std::move(observations)), m_rewards(std::move(rewards)), m_terminated(std::move(terminated)), m_truncated(std::move(truncated))
+{
+
+}
 
 template <Hashable AgentID, typename StateType>
 class ResettableObject {
